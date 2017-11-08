@@ -19,3 +19,11 @@ Build an app that is functionally similar to this: https://codepen.io/FreeCodeCa
 
 
 ## Discussion
+
+Note: with this project I tested out a slightly modified development environment based on https://medium.com/@peterxjang/modern-javascript-explained-for-dinosaurs-f695e9747b70
+
+This introduced using:
+* A JavaScript package manager (npm) to setup a project
+* A JavaScript module bundler (webpack) - although I probably won't have multiple .js in this project, I thought it would be handy to get used to using some of these extra tools. I'd heard about them before and have even used them without really understanding what they did
+* A task runner (npm scripts)
+* `package.json` and `node_modules`
