@@ -70,10 +70,23 @@
 "use strict";
 
 
-$(document).ready(function () {
-  console.log('ready');
-  console.log('again');
-  console.log('the third');
+var seq = [];
+var hov = document.getElementsByClassName('game')[0];
+console.log(hov);
+
+hov.addEventListener('mouseover', function (e) {
+  console.log(e.target.id);
+  var colorSelected = document.getElementById(e.target.id);
+  try {
+    colorSelected.classList.add('light');
+  } catch (e) {}
+});
+hov.addEventListener('mouseout', function (e) {
+  console.log(e.target.id);
+  var colorSelected = document.getElementById(e.target.id);
+  try {
+    colorSelected.classList.remove('light');
+  } catch (e) {}
 });
 
 /***/ })

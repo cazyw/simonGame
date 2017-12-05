@@ -49,20 +49,33 @@ body {
 #box0{
   border-top-left-radius: 100%;
   background: rgb(0, 167, 74);
-
 }
 #box1{
   border-top-right-radius: 100%;
   background: rgb(159, 15, 23);
-
 }
 #box2{
   border-bottom-left-radius: 100%;
   background: rgb(204, 167, 7);
-  
 }
 #box3{
   border-bottom-right-radius: 100%;
   background: rgb(9, 74, 143);
+}
 
+#box0.light{
+  border-top-left-radius: 100%;
+  background: rgb(0, 255, 106);
+}
+#box1.light{
+  border-top-right-radius: 100%;
+  background: rgb(248, 23, 38);
+}
+#box2.light{
+  border-bottom-left-radius: 100%;
+  background: rgb(252, 203, 8);
+}
+#box3.light{
+  border-bottom-right-radius: 100%;
+  background: rgb(15, 135, 255);
 }
