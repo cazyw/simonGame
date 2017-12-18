@@ -43,22 +43,25 @@ body {
   height: 50%;
   float: left;
   border: 12px solid rgb(51, 51, 51);
-  
 }
 
 #box0{
+  cursor: pointer;
   border-top-left-radius: 100%;
   background: rgb(0, 167, 74);
 }
 #box1{
+  cursor: pointer;
   border-top-right-radius: 100%;
   background: rgb(159, 15, 23);
 }
 #box2{
+  cursor: pointer;
   border-bottom-left-radius: 100%;
   background: rgb(204, 167, 7);
 }
 #box3{
+  cursor: pointer;
   border-bottom-right-radius: 100%;
   background: rgb(9, 74, 143);
 }
