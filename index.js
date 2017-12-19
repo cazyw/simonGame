@@ -5,17 +5,24 @@ let playerSeq = [];
 let count = 0;
 let playerCount = 0;
 let playerTurn = false;
-let timeShow = 1000;
-let timeGap = 500;
+let timeShow = 750;
+let timeGap = 250;
+let timeReset = 2000;
+let strictMode = false;
+
+let audio;
 
 hov.addEventListener('mousedown', (e) => {
   if (playerTurn) {
     console.log('Player selects: ', e.target.id);
     let colorSelected = document.getElementById(e.target.id);
-    colorSelected.classList.add('light');
-    playerSeq.push(e.target.id);
-    console.log('seq: ', seq);
-    console.log('player seq: ', playerSeq);
+    try {
+      colorSelected.classList.add('light');
+      playerSeq.push(e.target.id);
+      console.log('seq: ', seq);
+      console.log('player seq: ', playerSeq);
+
+    } catch(e){}
   }
 });
 hov.addEventListener('mouseup', (e) => {
@@ -23,20 +30,29 @@ hov.addEventListener('mouseup', (e) => {
     console.log(e.target.id);
     console.log('count ', count, 'playercount ', playerCount);
     let colorSelected = document.getElementById(e.target.id);
-    colorSelected.classList.remove('light');
-    if (!correctMatch(playerCount)) {
-      console.log(`failed at round ${playerCount+1}. Restart!`);
-      setTimeout(resetGame, 2000);
-    }
-    else if (playerSeq.length === seq.length){
-      console.log(`Made it through round ${count+1}. Next!`);
-      playerTurn = !playerTurn;
-      count++;
-      setTimeout(playRound, 2000);
-    } 
-    else {
-      playerCount++;
-    }
+    try {
+      colorSelected.classList.remove('light');
+      if (!correctMatch(playerCount)) {
+        playerTurn = false;
+        if (strictMode) {
+          console.log(`failed at round ${playerCount+1}. Restart!`);
+          setTimeout(resetGame, timeReset);
+        } else {
+          console.log(`failed at round ${playerCount+1}. Retry!`);
+          playerSeq = [];
+          setTimeout(highlightSeq, timeReset, 0);   
+        }
+      }
+      else if (playerSeq.length === seq.length){
+        console.log(`Made it through round ${count+1}. Next!`);
+        playerTurn = !playerTurn;
+        count++;
+        setTimeout(playRound, timeReset);
+      } 
+      else {
+        playerCount++;
+      }
+    } catch(e) {}
   }
 });
 
@@ -87,10 +103,12 @@ const playerPlays = () => {
   playerCount = 0;
 }
 
-
-
 const playRound = () => {
   console.log('Round ', count + 1, 'count ', count);
+  let counter = document.getElementsByClassName('counter')[0];
+  let tens = Math.floor((count + 1) / 10);
+  let ones = Math.floor((count + 1) % 10);
+  counter.innerHTML = `${tens} ${ones}`;
   addSeq(generateRandom());
   console.log(seq);
   playerSeq = [];

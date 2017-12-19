@@ -77,17 +77,23 @@ var playerSeq = [];
 var count = 0;
 var playerCount = 0;
 var playerTurn = false;
-var timeShow = 1000;
-var timeGap = 500;
+var timeShow = 750;
+var timeGap = 250;
+var timeReset = 2000;
+var strictMode = false;
+
+var audio = void 0;
 
 hov.addEventListener('mousedown', function (e) {
   if (playerTurn) {
     console.log('Player selects: ', e.target.id);
     var colorSelected = document.getElementById(e.target.id);
-    colorSelected.classList.add('light');
-    playerSeq.push(e.target.id);
-    console.log('seq: ', seq);
-    console.log('player seq: ', playerSeq);
+    try {
+      colorSelected.classList.add('light');
+      playerSeq.push(e.target.id);
+      console.log('seq: ', seq);
+      console.log('player seq: ', playerSeq);
+    } catch (e) {}
   }
 });
 hov.addEventListener('mouseup', function (e) {
@@ -95,18 +101,27 @@ hov.addEventListener('mouseup', function (e) {
     console.log(e.target.id);
     console.log('count ', count, 'playercount ', playerCount);
     var colorSelected = document.getElementById(e.target.id);
-    colorSelected.classList.remove('light');
-    if (!correctMatch(playerCount)) {
-      console.log('failed at round ' + (playerCount + 1) + '. Restart!');
-      setTimeout(resetGame, 2000);
-    } else if (playerSeq.length === seq.length) {
-      console.log('Made it through round ' + (count + 1) + '. Next!');
-      playerTurn = !playerTurn;
-      count++;
-      setTimeout(playRound, 2000);
-    } else {
-      playerCount++;
-    }
+    try {
+      colorSelected.classList.remove('light');
+      if (!correctMatch(playerCount)) {
+        playerTurn = false;
+        if (strictMode) {
+          console.log('failed at round ' + (playerCount + 1) + '. Restart!');
+          setTimeout(resetGame, timeReset);
+        } else {
+          console.log('failed at round ' + (playerCount + 1) + '. Retry!');
+          playerSeq = [];
+          setTimeout(highlightSeq, timeReset, 0);
+        }
+      } else if (playerSeq.length === seq.length) {
+        console.log('Made it through round ' + (count + 1) + '. Next!');
+        playerTurn = !playerTurn;
+        count++;
+        setTimeout(playRound, timeReset);
+      } else {
+        playerCount++;
+      }
+    } catch (e) {}
   }
 });
 
@@ -159,6 +174,10 @@ var playerPlays = function playerPlays() {
 
 var playRound = function playRound() {
   console.log('Round ', count + 1, 'count ', count);
+  var counter = document.getElementsByClassName('counter')[0];
+  var tens = Math.floor((count + 1) / 10);
+  var ones = Math.floor((count + 1) % 10);
+  counter.innerHTML = tens + ' ' + ones;
   addSeq(generateRandom());
   console.log(seq);
   playerSeq = [];
