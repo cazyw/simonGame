@@ -1,5 +1,6 @@
 const hov = document.getElementsByClassName('game')[0];
 const resetListener = document.getElementsByClassName('resetSwitch')[0];
+const strictListener = document.getElementsByClassName('strictSwitch')[0];
 console.log(hov);
 let seq = [];
 let playerSeq = [];
@@ -15,6 +16,11 @@ let audio;
 
 resetListener.addEventListener('click', (e) => {
   resetGame();
+});
+
+strictListener.addEventListener('click', (e) => {
+  strictMode = !strictMode;
+  console.log(`strict mode = ${strictMode}`);
 });
 
 hov.addEventListener('mousedown', (e) => {

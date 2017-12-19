@@ -72,6 +72,7 @@
 
 var hov = document.getElementsByClassName('game')[0];
 var resetListener = document.getElementsByClassName('resetSwitch')[0];
+var strictListener = document.getElementsByClassName('strictSwitch')[0];
 console.log(hov);
 var seq = [];
 var playerSeq = [];
@@ -87,6 +88,11 @@ var audio = void 0;
 
 resetListener.addEventListener('click', function (e) {
   resetGame();
+});
+
+strictListener.addEventListener('click', function (e) {
+  strictMode = !strictMode;
+  console.log('strict mode = ' + strictMode);
 });
 
 hov.addEventListener('mousedown', function (e) {
