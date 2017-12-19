@@ -70,11 +70,19 @@ div.mid {
   border: 12px solid rgb(51, 51, 51);
 }
 
-.btn-round {
+div.btn.btn-round {
   border-radius: 50%;
-  border: 1px solid black;
+  border: 2px solid black;
   width: 20px;
   height: 20px;
+}
+
+.resetSwitch {
+  background-color: red;
+}
+
+.strictSwitch {
+  background-color: yellow;
 }
 
 #box0{

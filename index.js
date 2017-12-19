@@ -1,4 +1,5 @@
 const hov = document.getElementsByClassName('game')[0];
+const resetListener = document.getElementsByClassName('resetSwitch')[0];
 console.log(hov);
 let seq = [];
 let playerSeq = [];
@@ -11,6 +12,10 @@ let timeReset = 2000;
 let strictMode = false;
 
 let audio;
+
+resetListener.addEventListener('click', (e) => {
+  resetGame();
+});
 
 hov.addEventListener('mousedown', (e) => {
   if (playerTurn) {
@@ -87,8 +92,9 @@ const resetGame = () => {
   playerTurn = false;
   seq = [];
   playerSeq = [];
+  document.getElementsByClassName('counter')[0].innerHTML = '- -';
   clearTimeout();
-  playRound();
+  setTimeout(playRound, 1000);
 }
 
 const correctMatch = (i) => {

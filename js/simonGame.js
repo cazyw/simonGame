@@ -71,6 +71,7 @@
 
 
 var hov = document.getElementsByClassName('game')[0];
+var resetListener = document.getElementsByClassName('resetSwitch')[0];
 console.log(hov);
 var seq = [];
 var playerSeq = [];
@@ -83,6 +84,10 @@ var timeReset = 2000;
 var strictMode = false;
 
 var audio = void 0;
+
+resetListener.addEventListener('click', function (e) {
+  resetGame();
+});
 
 hov.addEventListener('mousedown', function (e) {
   if (playerTurn) {
@@ -156,8 +161,9 @@ var resetGame = function resetGame() {
   playerTurn = false;
   seq = [];
   playerSeq = [];
+  document.getElementsByClassName('counter')[0].innerHTML = '- -';
   clearTimeout();
-  playRound();
+  setTimeout(playRound, 1000);
 };
 
 var correctMatch = function correctMatch(i) {
