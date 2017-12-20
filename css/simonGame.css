@@ -131,12 +131,14 @@ div.btn.btn-round {
 
 @media (max-width: 470px), (max-height: 470px) {
   .game {
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 350px;
   }
   .controlPanel {
-    top: 100px;
-    left: 100px;
+    top: 70px;
+    left: 70px;
+    width: 60%;
+    height: 60%;
   }
   body {
     height: 100%;
