@@ -96,6 +96,20 @@ strictListener.addEventListener('click', function (e) {
 });
 
 hov.addEventListener('mousedown', function (e) {
+  down(e);
+});
+hov.addEventListener('mouseup', function (e) {
+  up(e);
+});
+
+hov.addEventListener('touchstart', function (e) {
+  down(e);
+});
+hov.addEventListener('touchend', function (e) {
+  up(e);
+});
+
+var down = function down(e) {
   if (playerTurn) {
     console.log('Player selects: ', e.target.id);
     var colorSelected = document.getElementById(e.target.id);
@@ -106,8 +120,9 @@ hov.addEventListener('mousedown', function (e) {
       console.log('player seq: ', playerSeq);
     } catch (e) {}
   }
-});
-hov.addEventListener('mouseup', function (e) {
+};
+
+var up = function up(e) {
   if (playerTurn) {
     console.log(e.target.id);
     console.log('count ', count, 'playercount ', playerCount);
@@ -134,7 +149,7 @@ hov.addEventListener('mouseup', function (e) {
       }
     } catch (e) {}
   }
-});
+};
 
 var generateRandom = function generateRandom() {
   return Math.floor(Math.random() * 4);

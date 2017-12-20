@@ -24,6 +24,21 @@ strictListener.addEventListener('click', (e) => {
 });
 
 hov.addEventListener('mousedown', (e) => {
+  down(e);
+});
+hov.addEventListener('mouseup', (e) => {
+  up(e);
+});
+
+hov.addEventListener('touchstart', (e) => {
+  down(e);
+});
+hov.addEventListener('touchend', (e) => {
+  up(e);
+});
+
+
+const down = (e) => {
   if (playerTurn) {
     console.log('Player selects: ', e.target.id);
     let colorSelected = document.getElementById(e.target.id);
@@ -32,11 +47,13 @@ hov.addEventListener('mousedown', (e) => {
       playerSeq.push(e.target.id);
       console.log('seq: ', seq);
       console.log('player seq: ', playerSeq);
-
+  
     } catch(e){}
   }
-});
-hov.addEventListener('mouseup', (e) => {
+
+}
+
+const up = (e) => {
   if (playerTurn) {
     console.log(e.target.id);
     console.log('count ', count, 'playercount ', playerCount);
@@ -65,7 +82,8 @@ hov.addEventListener('mouseup', (e) => {
       }
     } catch(e) {}
   }
-});
+}
+
 
 const generateRandom = () => {
   return Math.floor(Math.random() * 4);
