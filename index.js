@@ -61,6 +61,11 @@ const up = (e) => {
     try {
       colorSelected.classList.remove('light');
       if (!correctMatch(playerCount)) {
+        let moveStatus = document.getElementsByClassName('controlPanel')[0];
+        moveStatus.classList.add('wrong');
+        setTimeout(() => {
+          moveStatus.classList.remove('wrong');
+        }, 250);
         playerTurn = false;
         if (strictMode) {
           console.log(`failed at round ${playerCount+1}. Restart!`);
@@ -72,6 +77,12 @@ const up = (e) => {
         }
       }
       else if (playerSeq.length === seq.length){
+        let moveStatus = document.getElementsByClassName('controlPanel')[0];
+        moveStatus.classList.add('correct');
+        setTimeout(() => {
+          moveStatus.classList.remove('correct');
+        }, 250);
+        clearTimeout();
         console.log(`Made it through round ${count+1}. Next!`);
         playerTurn = !playerTurn;
         count++;

@@ -44,6 +44,15 @@ div {
   justify-content: center;
 }
 
+.controlPanel.wrong {
+  border-color: rgb(97, 33, 33);
+}
+
+.controlPanel.correct {
+  border-color: rgb(34, 78, 58);
+}
+
+
 div.row {
   display: flex;
   align-items: center;
