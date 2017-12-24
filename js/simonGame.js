@@ -83,8 +83,16 @@ var timeShow = 750;
 var timeGap = 250;
 var timeReset = 2000;
 var strictMode = false;
+var sound = [164.81, 220.00, 277.18, 329.63];
 
-var audio = void 0;
+var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+var osc = audioCtx.createOscillator();
+osc.type = 'sine';
+osc.frequency.value = 164.81;
+osc.connect(audioCtx.destination);
+osc.start(0);
+osc.disconnect(audioCtx.destination);
 
 resetListener.addEventListener('click', function (e) {
   resetGame();
@@ -125,6 +133,9 @@ var down = function down(e) {
       playerSeq.push(e.target.id);
       console.log('seq: ', seq);
       console.log('player seq: ', playerSeq);
+      var boxNo = Number(e.target.id[3]);
+      osc.frequency.value = sound[boxNo];
+      osc.connect(audioCtx.destination);
     } catch (e) {}
   }
 };
@@ -136,12 +147,17 @@ var up = function up(e) {
     console.log('count ', count, 'playercount ', playerCount);
     var colorSelected = document.getElementById(e.target.id);
     try {
+      osc.disconnect(audioCtx.destination);
       colorSelected.classList.remove('light');
       if (!correctMatch(playerCount)) {
         var moveStatus = document.getElementsByClassName('controlPanel')[0];
         moveStatus.classList.add('wrong');
+
+        osc.frequency.value = 80;
+        osc.connect(audioCtx.destination);
         setTimeout(function () {
           moveStatus.classList.remove('wrong');
+          osc.disconnect(audioCtx.destination);
         }, 500);
         playerTurn = false;
         if (strictMode) {
@@ -153,7 +169,7 @@ var up = function up(e) {
           setTimeout(highlightSeq, timeReset, 0);
         }
       } else if (playerSeq.length === seq.length) {
-        if (playerSeq.length === 3) {
+        if (playerSeq.length === 20) {
           document.getElementById('box0').classList.add('correct');
           document.getElementById('box1').classList.add('correct');
           document.getElementById('box2').classList.add('correct');
@@ -201,8 +217,12 @@ var highlightSeq = function highlightSeq(i) {
   console.log('highlightSeq ', seq[i]);
   if (i < seq.length) {
     colorSelected.classList.add('light');
+    var boxNo = Number(seq[i][3]);
+    osc.frequency.value = sound[boxNo];
+    osc.connect(audioCtx.destination);
     setTimeout(function () {
       colorSelected.classList.remove('light');
+      osc.disconnect(audioCtx.destination);
       setTimeout(function () {
         i++;
         highlightSeq(i);
