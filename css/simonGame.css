@@ -145,6 +145,13 @@ div.btn.btn-round {
   background: rgb(15, 135, 255);
 }
 
+#box0.correct,
+#box1.correct,
+#box2.correct,
+#box3.correct {
+  background: rgb(87, 231, 164);
+}
+
 @media (max-width: 470px), (max-height: 470px) {
   .game {
     width: 350px;

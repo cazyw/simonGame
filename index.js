@@ -85,16 +85,34 @@ const up = (e) => {
         }
       }
       else if (playerSeq.length === seq.length){
-        let moveStatus = document.getElementsByClassName('controlPanel')[0];
-        moveStatus.classList.add('correct');
-        setTimeout(() => {
-          moveStatus.classList.remove('correct');
-        }, 500);
-        clearTimeout();
-        console.log(`Made it through round ${count+1}. Next!`);
-        playerTurn = !playerTurn;
-        count++;
-        setTimeout(playRound, timeReset);
+        if (playerSeq.length === 3) {
+          document.getElementById('box0').classList.add('correct');
+          document.getElementById('box1').classList.add('correct');
+          document.getElementById('box2').classList.add('correct');
+          document.getElementById('box3').classList.add('correct');
+          document.getElementsByClassName('heading')[0].textContent = 'You Win!';
+          clearTimeout();
+          setTimeout(() => {
+            document.getElementById('box0').classList.remove('correct');
+            document.getElementById('box1').classList.remove('correct');
+            document.getElementById('box2').classList.remove('correct');
+            document.getElementById('box3').classList.remove('correct');
+            document.getElementsByClassName('heading')[0].textContent = 'Simon Game';
+            clearTimeout();
+            resetGame();
+          }, 500);
+        } else {
+          let moveStatus = document.getElementsByClassName('controlPanel')[0];
+          moveStatus.classList.add('correct');
+          setTimeout(() => {
+            moveStatus.classList.remove('correct');
+          }, 500);
+          clearTimeout();
+          console.log(`Made it through round ${count+1}. Next!`);
+          playerTurn = !playerTurn;
+          count++;
+          setTimeout(playRound, timeReset);
+        }
       } 
       else {
         playerCount++;
