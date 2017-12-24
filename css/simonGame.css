@@ -45,11 +45,11 @@ div {
 }
 
 .controlPanel.wrong {
-  border-color: rgb(97, 33, 33);
+  background: rgb(207, 126, 126);
 }
 
 .controlPanel.correct {
-  border-color: rgb(34, 78, 58);
+  background: rgb(159, 228, 196);
 }
 
 

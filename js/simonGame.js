@@ -96,16 +96,20 @@ strictListener.addEventListener('click', function (e) {
 });
 
 hov.addEventListener('mousedown', function (e) {
+  e.preventDefault();
   down(e);
 });
 hov.addEventListener('mouseup', function (e) {
+  e.preventDefault();
   up(e);
 });
 
 hov.addEventListener('touchstart', function (e) {
+  e.preventDefault();
   down(e);
 });
 hov.addEventListener('touchend', function (e) {
+  e.preventDefault();
   up(e);
 });
 

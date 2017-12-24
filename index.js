@@ -24,16 +24,20 @@ strictListener.addEventListener('click', (e) => {
 });
 
 hov.addEventListener('mousedown', (e) => {
+  e.preventDefault();
   down(e);
 });
 hov.addEventListener('mouseup', (e) => {
+  e.preventDefault();
   up(e);
 });
 
 hov.addEventListener('touchstart', (e) => {
+  e.preventDefault();
   down(e);
 });
 hov.addEventListener('touchend', (e) => {
+  e.preventDefault();
   up(e);
 });
 
