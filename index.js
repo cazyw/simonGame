@@ -20,29 +20,32 @@ resetListener.addEventListener('click', (e) => {
 
 strictListener.addEventListener('click', (e) => {
   strictMode = !strictMode;
+  if (strictMode) {
+    document.getElementsByClassName('strictSwitch')[0].classList.add('on');
+  } else {
+    document.getElementsByClassName('strictSwitch')[0].classList.remove('on');
+  }
   console.log(`strict mode = ${strictMode}`);
+  resetGame();
 });
 
 hov.addEventListener('mousedown', (e) => {
-  e.preventDefault();
   down(e);
 });
 hov.addEventListener('mouseup', (e) => {
-  e.preventDefault();
   up(e);
 });
 
 hov.addEventListener('touchstart', (e) => {
-  e.preventDefault();
   down(e);
 });
 hov.addEventListener('touchend', (e) => {
-  e.preventDefault();
   up(e);
 });
 
 
 const down = (e) => {
+  e.preventDefault();
   if (playerTurn) {
     console.log('Player selects: ', e.target.id);
     let colorSelected = document.getElementById(e.target.id);
@@ -58,6 +61,7 @@ const down = (e) => {
 }
 
 const up = (e) => {
+  e.preventDefault();
   if (playerTurn) {
     console.log(e.target.id);
     console.log('count ', count, 'playercount ', playerCount);
@@ -69,7 +73,7 @@ const up = (e) => {
         moveStatus.classList.add('wrong');
         setTimeout(() => {
           moveStatus.classList.remove('wrong');
-        }, 250);
+        }, 500);
         playerTurn = false;
         if (strictMode) {
           console.log(`failed at round ${playerCount+1}. Restart!`);
@@ -85,7 +89,7 @@ const up = (e) => {
         moveStatus.classList.add('correct');
         setTimeout(() => {
           moveStatus.classList.remove('correct');
-        }, 250);
+        }, 500);
         clearTimeout();
         console.log(`Made it through round ${count+1}. Next!`);
         playerTurn = !playerTurn;

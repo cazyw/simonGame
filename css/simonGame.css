@@ -15,6 +15,9 @@ div {
   text-align: center;
 }
 
+.heading {
+  font-size: 1.5em;
+}
 .game {
   width: 470px;
   height: 470px;
@@ -61,7 +64,7 @@ div.row {
 div.mid {
   /* border: 1px solid black; */
   display: inline-block;
-  height: 60px;
+  height: 40px;
   margin: 5px;
 }
 
@@ -98,6 +101,10 @@ div.btn.btn-round {
 
 .strictSwitch {
   background-color: yellow;
+}
+
+.strictSwitch.on {
+  background-color: rgb(94, 255, 0);
 }
 
 #box0{
@@ -148,6 +155,9 @@ div.btn.btn-round {
     left: 70px;
     width: 60%;
     height: 60%;
+  }
+  .box {
+    border-width: 5px;
   }
   body {
     height: 100%;
