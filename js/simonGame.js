@@ -70,6 +70,14 @@
 "use strict";
 
 
+var _game = __webpack_require__(1);
+
+var _game2 = _interopRequireDefault(_game);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var audioTones = __webpack_require__(2);
+
 var hov = document.getElementsByClassName('game')[0];
 var resetListener = document.getElementsByClassName('resetSwitch')[0];
 var strictListener = document.getElementsByClassName('strictSwitch')[0];
@@ -83,41 +91,6 @@ var timeShow = 750;
 var timeGap = 250;
 var timeReset = 2000;
 var strictMode = false;
-var sound = [164.81, 220.00, 277.18, 329.63, 90, 380];
-
-var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-var osc0 = audioCtx.createOscillator();
-osc0.type = 'square';
-osc0.frequency.value = sound[0];
-osc0.start(0);
-
-var osc1 = audioCtx.createOscillator();
-osc1.type = 'square';
-osc1.frequency.value = sound[1];
-osc1.start(0);
-
-var osc2 = audioCtx.createOscillator();
-osc2.type = 'square';
-osc2.frequency.value = sound[2];
-osc2.start(0);
-
-var osc3 = audioCtx.createOscillator();
-osc3.type = 'square';
-osc3.frequency.value = sound[3];
-osc3.start(0);
-
-var errorTone = audioCtx.createOscillator();
-errorTone.type = 'square';
-errorTone.frequency.value = sound[4];
-errorTone.start(0);
-
-var correctTone = audioCtx.createOscillator();
-correctTone.type = 'square';
-correctTone.frequency.value = sound[5];
-correctTone.start(0);
-
-// osc.disconnect(audioCtx.destination);
 
 resetListener.addEventListener('click', function (e) {
   resetGame();
@@ -158,7 +131,7 @@ var down = function down(e) {
       playerSeq.push(e.target.id);
       console.log('seq: ', seq);
       console.log('player seq: ', playerSeq);
-      eval('osc' + Number(e.target.id[3])).connect(audioCtx.destination);
+      audioTones.playTone(e.target.id[3]);
     } catch (e) {}
   }
 };
@@ -170,17 +143,17 @@ var up = function up(e) {
     console.log('count ', count, 'playercount ', playerCount);
     var colorSelected = document.getElementById(e.target.id);
     try {
-      eval('osc' + Number(e.target.id[3])).disconnect(audioCtx.destination);
+      audioTones.pauseTone(e.target.id[3]);
       colorSelected.classList.remove('light');
       if (!correctMatch(playerCount)) {
         setTimeout(function () {
           var moveStatus = document.getElementsByClassName('controlPanel')[0];
           moveStatus.classList.add('wrong');
-          errorTone.connect(audioCtx.destination);
+          audioTones.playTone('error');
           setTimeout(function () {
             clearTimeout();
             moveStatus.classList.remove('wrong');
-            errorTone.disconnect(audioCtx.destination);
+            audioTones.pauseTone('error');
           }, 500);
           playerTurn = false;
           if (strictMode) {
@@ -201,6 +174,7 @@ var up = function up(e) {
           document.getElementById('box3').classList.add('correct');
           document.getElementsByClassName('heading')[0].textContent = 'You Win!';
           document.getElementsByClassName('counter')[0].textContent = '! !';
+          audioTones.playTone('win');
           clearTimeout();
           setTimeout(function () {
             document.getElementById('box0').classList.remove('correct');
@@ -216,11 +190,11 @@ var up = function up(e) {
           setTimeout(function () {
             var moveStatus = document.getElementsByClassName('controlPanel')[0];
             moveStatus.classList.add('correct');
-            correctTone.connect(audioCtx.destination);
+            audioTones.playTone('correct');
             setTimeout(function () {
               clearTimeout();
               moveStatus.classList.remove('correct');
-              correctTone.disconnect(audioCtx.destination);
+              audioTones.pauseTone('correct');
             }, 500);
             clearTimeout();
             console.log('Made it through round ' + (count + 1) + '. Next!');
@@ -249,11 +223,10 @@ var highlightSeq = function highlightSeq(i) {
   console.log('highlightSeq ', seq[i]);
   if (i < seq.length) {
     colorSelected.classList.add('light');
-    var boxNo = Number(seq[i][3]);
-    eval('osc' + boxNo).connect(audioCtx.destination);
+    audioTones.playTone(seq[i][3]);
     setTimeout(function () {
       colorSelected.classList.remove('light');
-      eval('osc' + boxNo).disconnect(audioCtx.destination);
+      audioTones.pauseTone(seq[i][3]);
       setTimeout(function () {
         i++;
         highlightSeq(i);
@@ -306,7 +279,158 @@ var game = function game() {
   playRound();
 };
 
-setTimeout(game, 1000);
+// setTimeout(game, 1000);
+
+var g = new _game2.default();
+console.log(g);
+
+audioTones.playTone('win');
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Game = function Game() {
+  _classCallCheck(this, Game);
+
+  this.seq = [];
+  this.playerSeq = [];
+  this.count = 0;
+  this.playerCount = 0;
+  this.playerTurn = false;
+  this.timeShow = 750;
+  this.timeGap = 250;
+  this.timeReset = 2000;
+  this.strictMode = false;
+};
+
+exports.default = Game;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// Module to play the audio for the four buttons and the error / correct choice
+
+var sound = [164.81, 220.00, 277.18, 329.63, 90, 380];
+var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+var osc0 = audioCtx.createOscillator();
+var osc1 = audioCtx.createOscillator();
+var osc2 = audioCtx.createOscillator();
+var osc3 = audioCtx.createOscillator();
+var errorTone = audioCtx.createOscillator();
+var correctTone = audioCtx.createOscillator();
+
+osc0.frequency.value = sound[0];
+osc0.start(0);
+
+osc1.frequency.value = sound[1];
+osc1.start(0);
+
+osc2.frequency.value = sound[2];
+osc2.start(0);
+
+osc3.frequency.value = sound[3];
+osc3.start(0);
+
+errorTone.frequency.value = sound[4];
+errorTone.start(0);
+
+correctTone.frequency.value = sound[5];
+correctTone.start(0);
+
+var winning = function winning() {
+  var n = audioCtx.createOscillator();
+  n.frequency.value = 195.998; // G3
+  n.connect(audioCtx.destination);
+
+  var b = audioCtx.createOscillator();
+  b.frequency.value = 329.628; // E4
+  b.connect(audioCtx.destination);
+
+  var c = audioCtx.createOscillator();
+  c.frequency.value = 261.626; // C4
+  c.connect(audioCtx.destination);
+
+  n.start(audioCtx.currentTime);
+  n.stop(audioCtx.currentTime + 0.25);
+
+  b.start(audioCtx.currentTime + 0.5);
+  b.stop(audioCtx.currentTime + 0.75);
+
+  c.start(audioCtx.currentTime + 1.0);
+  c.stop(audioCtx.currentTime + 1.25);
+};
+
+var playTone = function playTone(type) {
+  switch (type) {
+    case 'win':
+      winning();
+      break;
+    case 'correct':
+      correctTone.connect(audioCtx.destination);
+      break;
+    case 'error':
+      errorTone.connect(audioCtx.destination);
+      break;
+    case '0':
+      osc0.connect(audioCtx.destination);
+      break;
+    case '1':
+      osc1.connect(audioCtx.destination);
+      break;
+    case '2':
+      osc2.connect(audioCtx.destination);
+      break;
+    case '3':
+      osc3.connect(audioCtx.destination);
+      break;
+    default:
+      console.log('nothing here');
+  }
+};
+
+var pauseTone = function pauseTone(type) {
+  switch (type) {
+    case 'correct':
+      correctTone.disconnect(audioCtx.destination);
+      break;
+    case 'error':
+      errorTone.disconnect(audioCtx.destination);
+      break;
+    case '0':
+      osc0.disconnect(audioCtx.destination);
+      break;
+    case '1':
+      osc1.disconnect(audioCtx.destination);
+      break;
+    case '2':
+      osc2.disconnect(audioCtx.destination);
+      break;
+    case '3':
+      osc3.disconnect(audioCtx.destination);
+      break;
+    default:
+      console.log('nothing here');
+  }
+};
+
+module.exports = {
+  playTone: playTone,
+  pauseTone: pauseTone
+};
 
 /***/ })
 /******/ ]);

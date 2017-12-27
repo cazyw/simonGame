@@ -1,3 +1,6 @@
+import Game from './game.js';
+const audioTones = require('./audioTones.js');
+
 const hov = document.getElementsByClassName('game')[0];
 const resetListener = document.getElementsByClassName('resetSwitch')[0];
 const strictListener = document.getElementsByClassName('strictSwitch')[0];
@@ -11,41 +14,6 @@ let timeShow = 750;
 let timeGap = 250;
 let timeReset = 2000;
 let strictMode = false;
-let sound = [164.81, 220.00, 277.18, 329.63, 90, 380]
-
-var audioCtx =  new (window.AudioContext || window.webkitAudioContext)();
-
-var osc0 = audioCtx.createOscillator();
-osc0.type = 'square';
-osc0.frequency.value = sound[0];
-osc0.start(0);
-
-var osc1 = audioCtx.createOscillator();
-osc1.type = 'square';
-osc1.frequency.value = sound[1];
-osc1.start(0);
-
-var osc2 = audioCtx.createOscillator();
-osc2.type = 'square';
-osc2.frequency.value = sound[2];
-osc2.start(0);
-
-var osc3 = audioCtx.createOscillator();
-osc3.type = 'square';
-osc3.frequency.value = sound[3];
-osc3.start(0);
-
-var errorTone = audioCtx.createOscillator();
-errorTone.type = 'square';
-errorTone.frequency.value = sound[4];
-errorTone.start(0);
-
-var correctTone = audioCtx.createOscillator();
-correctTone.type = 'square';
-correctTone.frequency.value = sound[5];
-correctTone.start(0);
-
-// osc.disconnect(audioCtx.destination);
 
 resetListener.addEventListener('click', (e) => {
   resetGame();
@@ -87,7 +55,7 @@ const down = (e) => {
       playerSeq.push(e.target.id);
       console.log('seq: ', seq);
       console.log('player seq: ', playerSeq);
-      eval(`osc${Number(e.target.id[3])}`).connect(audioCtx.destination);
+      audioTones.playTone(e.target.id[3]);
     } catch(e){}
   }
 
@@ -100,17 +68,17 @@ const up = (e) => {
     console.log('count ', count, 'playercount ', playerCount);
     let colorSelected = document.getElementById(e.target.id);
     try {
-      eval(`osc${Number(e.target.id[3])}`).disconnect(audioCtx.destination);
+      audioTones.pauseTone(e.target.id[3]);
       colorSelected.classList.remove('light');
       if (!correctMatch(playerCount)) {
         setTimeout(() => {
           let moveStatus = document.getElementsByClassName('controlPanel')[0];
           moveStatus.classList.add('wrong');
-          errorTone.connect(audioCtx.destination);
+          audioTones.playTone('error');
           setTimeout(() => {
             clearTimeout();
             moveStatus.classList.remove('wrong');
-            errorTone.disconnect(audioCtx.destination);
+            audioTones.pauseTone('error');
           }, 500);
           playerTurn = false;
           if (strictMode) {
@@ -132,6 +100,7 @@ const up = (e) => {
           document.getElementById('box3').classList.add('correct');
           document.getElementsByClassName('heading')[0].textContent = 'You Win!';
           document.getElementsByClassName('counter')[0].textContent = '! !';
+          audioTones.playTone('win');
           clearTimeout();
           setTimeout(() => {
             document.getElementById('box0').classList.remove('correct');
@@ -147,11 +116,11 @@ const up = (e) => {
           setTimeout(() => {
             let moveStatus = document.getElementsByClassName('controlPanel')[0];
             moveStatus.classList.add('correct');
-            correctTone.connect(audioCtx.destination);
+            audioTones.playTone('correct');
             setTimeout(() => {
               clearTimeout();
               moveStatus.classList.remove('correct');
-              correctTone.disconnect(audioCtx.destination);
+              audioTones.pauseTone('correct');
             }, 500);
             clearTimeout();
             console.log(`Made it through round ${count+1}. Next!`);
@@ -182,11 +151,10 @@ const highlightSeq = (i) => {
   console.log('highlightSeq ', seq[i]);
   if (i < seq.length){
     colorSelected.classList.add('light');
-    let boxNo = Number(seq[i][3]);
-    eval(`osc${boxNo}`).connect(audioCtx.destination);
+    audioTones.playTone(seq[i][3]);
     setTimeout(function(){
       colorSelected.classList.remove('light');
-      eval(`osc${boxNo}`).disconnect(audioCtx.destination);
+      audioTones.pauseTone(seq[i][3]);
       setTimeout(function() {
         i++;
         highlightSeq(i);
@@ -239,4 +207,12 @@ const game = () => {
   playRound();
 }
 
-setTimeout(game, 1000);
+
+// setTimeout(game, 1000);
+
+let g = new Game();
+console.log(g);
+
+audioTones.playTone('win');
+
+            
