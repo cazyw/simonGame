@@ -1,6 +1,6 @@
 // webpack.config.js
 module.exports = {
-  entry: './index.js',
+  entry: './tmp/index.js',
   output: {
     filename: './js/simonGame.js'
   },

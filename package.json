@@ -2,7 +2,7 @@
   "name": "simongame",
   "version": "1.0.0",
   "description": "Free Code Camp Simon Game APP",
-  "main": "index.js",
+  "main": "tmp/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --progress -p",
@@ -25,8 +25,5 @@
     "babel-preset-env": "^1.6.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
-  },
-  "dependencies": {
-    "howler": "^2.0.7"
   }
 }

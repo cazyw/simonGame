@@ -17,13 +17,27 @@ Build an app that is functionally similar to this: https://codepen.io/FreeCodeCa
 
 <img src="" width="450" alt="">
 
+The gameplay:
+
+1. The computer will play a series of tones/colours
+2. The player tries to replicate that sequence of tones/colours
+
+The aim: Get a series of 20 tones/colours correct to win the game.
+
+Every time a player makes an incorrect choice, the computer will play that series of tones/colours again and the player can try again. Players can also choose to play in the harder  **strict mode** (toggle the button to green), whereby an incorrect choice will reset the game back to the beginning.
 
 ## Discussion
 
+### Setup
 Note: with this project I tested out a slightly modified development environment based on https://medium.com/@peterxjang/modern-javascript-explained-for-dinosaurs-f695e9747b70
 
 This introduced using:
 * A JavaScript package manager (npm) to setup a project
-* A JavaScript module bundler (webpack) - although I probably won't have multiple .js in this project, I thought it would be handy to get used to using some of these extra tools. I'd heard about them before and have even used them without really understanding what they did
+* A JavaScript module bundler (webpack)
 * A task runner (npm scripts)
 * `package.json` and `node_modules`
+
+It was useful to be able to run the following script which watches for any changes to ny js files and automatically transpiles the code from ES6 to ES5 and pulls all the modules into the one file every time I update one of the .js files.
+```
+$ npm run watch
+```
