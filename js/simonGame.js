@@ -356,7 +356,9 @@ exports.default = Game;
 
 var sound = [164.81, 220.00, 277.18, 329.63, 200, 380];
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
+var gainNode = audioCtx.createGain();
+gainNode.connect(audioCtx.destination);
+gainNode.gain.value = 0.1;
 var osc0 = audioCtx.createOscillator();
 osc0.type = 'square';
 osc0.frequency.value = sound[0];
@@ -390,15 +392,18 @@ correctTone.start(0);
 var winning = function winning() {
   var n = audioCtx.createOscillator();
   n.frequency.value = 195.998; // G3
-  n.connect(audioCtx.destination);
+  n.type = 'square';
+  n.connect(gainNode);
 
   var b = audioCtx.createOscillator();
   b.frequency.value = 329.628; // E4
-  b.connect(audioCtx.destination);
+  b.type = 'square';
+  b.connect(gainNode);
 
   var c = audioCtx.createOscillator();
   c.frequency.value = 261.626; // C4
-  c.connect(audioCtx.destination);
+  c.type = 'square';
+  c.connect(gainNode);
 
   n.start(audioCtx.currentTime);
   n.stop(audioCtx.currentTime + 0.25);
@@ -416,22 +421,22 @@ var playTone = function playTone(type) {
       winning();
       break;
     case 'correct':
-      correctTone.connect(audioCtx.destination);
+      correctTone.connect(gainNode);
       break;
     case 'incorrect':
-      errorTone.connect(audioCtx.destination);
+      errorTone.connect(gainNode);
       break;
     case '0':
-      osc0.connect(audioCtx.destination);
+      osc0.connect(gainNode);
       break;
     case '1':
-      osc1.connect(audioCtx.destination);
+      osc1.connect(gainNode);
       break;
     case '2':
-      osc2.connect(audioCtx.destination);
+      osc2.connect(gainNode);
       break;
     case '3':
-      osc3.connect(audioCtx.destination);
+      osc3.connect(gainNode);
       break;
     default:
       console.log('nothing here');
@@ -441,22 +446,22 @@ var playTone = function playTone(type) {
 var pauseTone = function pauseTone(type) {
   switch (type) {
     case 'correct':
-      correctTone.disconnect(audioCtx.destination);
+      correctTone.disconnect(gainNode);
       break;
     case 'incorrect':
-      errorTone.disconnect(audioCtx.destination);
+      errorTone.disconnect(gainNode);
       break;
     case '0':
-      osc0.disconnect(audioCtx.destination);
+      osc0.disconnect(gainNode);
       break;
     case '1':
-      osc1.disconnect(audioCtx.destination);
+      osc1.disconnect(gainNode);
       break;
     case '2':
-      osc2.disconnect(audioCtx.destination);
+      osc2.disconnect(gainNode);
       break;
     case '3':
-      osc3.disconnect(audioCtx.destination);
+      osc3.disconnect(gainNode);
       break;
     default:
       console.log('nothing here');
