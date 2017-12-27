@@ -7,7 +7,7 @@ export default class Game{
     this.playerTurn = false;
     this.timeShow = 750;
     this.timeGap = 250;
-    this.timeReset = 2000;
+    this.timeReset = 1500;
     this.strictMode = false;
   }
 
@@ -28,7 +28,7 @@ export default class Game{
   }
 
   winGame() {
-    const MAX = 3;
+    const MAX = 20;
     return this.playerSeq.length === MAX;
   }
 

@@ -1,4 +1,7 @@
 // Module to play the audio for the four buttons and the error / correct choice
+// Using Web Audio API and setting the frequencies as this allows the 
+// tones to be played for a unset period of time (depending on how long players
+// hold the buttons down)
  
 var sound = [164.81, 220.00, 277.18, 329.63, 90, 380];
 var audioCtx =  new (window.AudioContext || window.webkitAudioContext)();
