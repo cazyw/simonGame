@@ -11,7 +11,7 @@ let timeShow = 750;
 let timeGap = 250;
 let timeReset = 2000;
 let strictMode = false;
-let sound = [164.81, 220.00, 277.18, 329.63]
+let sound = [164.81, 220.00, 277.18, 329.63, 90, 380]
 
 var audioCtx =  new (window.AudioContext || window.webkitAudioContext)();
 
@@ -35,10 +35,15 @@ osc3.type = 'square';
 osc3.frequency.value = sound[3];
 osc3.start(0);
 
-var error = audioCtx.createOscillator();
-error.type = 'square';
-error.frequency.value = sound[3];
-error.start(0);
+var errorTone = audioCtx.createOscillator();
+errorTone.type = 'square';
+errorTone.frequency.value = sound[4];
+errorTone.start(0);
+
+var correctTone = audioCtx.createOscillator();
+correctTone.type = 'square';
+correctTone.frequency.value = sound[5];
+correctTone.start(0);
 
 // osc.disconnect(audioCtx.destination);
 
@@ -98,31 +103,35 @@ const up = (e) => {
       eval(`osc${Number(e.target.id[3])}`).disconnect(audioCtx.destination);
       colorSelected.classList.remove('light');
       if (!correctMatch(playerCount)) {
-        let moveStatus = document.getElementsByClassName('controlPanel')[0];
-        moveStatus.classList.add('wrong');
-        error.connect(audioCtx.destination);
         setTimeout(() => {
-          moveStatus.classList.remove('wrong');
-          error.disconnect(audioCtx.destination);
-
-        }, 500);
-        playerTurn = false;
-        if (strictMode) {
-          console.log(`failed at round ${playerCount+1}. Restart!`);
-          setTimeout(resetGame, timeReset);
-        } else {
-          console.log(`failed at round ${playerCount+1}. Retry!`);
-          playerSeq = [];
-          setTimeout(highlightSeq, timeReset, 0);   
-        }
+          let moveStatus = document.getElementsByClassName('controlPanel')[0];
+          moveStatus.classList.add('wrong');
+          errorTone.connect(audioCtx.destination);
+          setTimeout(() => {
+            clearTimeout();
+            moveStatus.classList.remove('wrong');
+            errorTone.disconnect(audioCtx.destination);
+          }, 500);
+          playerTurn = false;
+          if (strictMode) {
+            console.log(`failed at round ${playerCount+1}. Restart!`);
+            document.getElementsByClassName('counter')[0].textContent = 'X X';
+            setTimeout(resetGame, timeReset);
+          } else {
+            console.log(`failed at round ${playerCount+1}. Retry!`);
+            playerSeq = [];
+            setTimeout(highlightSeq, timeReset, 0);   
+          }
+        }, 250);
       }
       else if (playerSeq.length === seq.length){
-        if (playerSeq.length === 20) {
+        if (playerSeq.length === 3) {
           document.getElementById('box0').classList.add('correct');
           document.getElementById('box1').classList.add('correct');
           document.getElementById('box2').classList.add('correct');
           document.getElementById('box3').classList.add('correct');
           document.getElementsByClassName('heading')[0].textContent = 'You Win!';
+          document.getElementsByClassName('counter')[0].textContent = '! !';
           clearTimeout();
           setTimeout(() => {
             document.getElementById('box0').classList.remove('correct');
@@ -130,20 +139,26 @@ const up = (e) => {
             document.getElementById('box2').classList.remove('correct');
             document.getElementById('box3').classList.remove('correct');
             document.getElementsByClassName('heading')[0].textContent = 'Simon Game';
+            document.getElementsByClassName('counter')[0].textContent = '- -';
             clearTimeout();
             resetGame();
-          }, 500);
+          }, 2000);
         } else {
-          let moveStatus = document.getElementsByClassName('controlPanel')[0];
-          moveStatus.classList.add('correct');
           setTimeout(() => {
-            moveStatus.classList.remove('correct');
-          }, 500);
-          clearTimeout();
-          console.log(`Made it through round ${count+1}. Next!`);
-          playerTurn = !playerTurn;
-          count++;
-          setTimeout(playRound, timeReset);
+            let moveStatus = document.getElementsByClassName('controlPanel')[0];
+            moveStatus.classList.add('correct');
+            correctTone.connect(audioCtx.destination);
+            setTimeout(() => {
+              clearTimeout();
+              moveStatus.classList.remove('correct');
+              correctTone.disconnect(audioCtx.destination);
+            }, 500);
+            clearTimeout();
+            console.log(`Made it through round ${count+1}. Next!`);
+            playerTurn = !playerTurn;
+            count++;
+            setTimeout(playRound, timeReset);
+          }, 250);   
         }
       } 
       else {
@@ -190,7 +205,7 @@ const resetGame = () => {
   playerSeq = [];
   document.getElementsByClassName('counter')[0].innerHTML = '- -';
   clearTimeout();
-  setTimeout(playRound, 1000);
+  setTimeout(playRound, 1500);
 }
 
 const correctMatch = (i) => {
