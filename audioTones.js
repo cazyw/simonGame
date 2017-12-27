@@ -8,6 +8,7 @@ var audioCtx =  new (window.AudioContext || window.webkitAudioContext)();
 var gainNode = audioCtx.createGain();
 gainNode.connect(audioCtx.destination);
 gainNode.gain.value = 0.1;
+
 var osc0 = audioCtx.createOscillator();
 osc0.type = 'square';
 osc0.frequency.value = sound[0];
