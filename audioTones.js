@@ -23,7 +23,7 @@ osc3.frequency.value = sound[3];
 osc3.start(0);
 
 var errorTone = audioCtx.createOscillator();
-errorTone.type = 'square';
+// errorTone.type = 'square';
 errorTone.frequency.value = sound[4];
 errorTone.start(0);
 
