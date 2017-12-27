@@ -4,7 +4,6 @@ export default class Game{
     this.seq = [];
     this.playerSeq = [];
     this.count = 0;
-    this.playerCount = 0;
     this.playerTurn = false;
     this.timeShow = 750;
     this.timeGap = 250;
@@ -14,10 +13,14 @@ export default class Game{
 
   reset() {
     this.count = 0;
-    this.playerCount = 0;
     this.playerTurn = false;
     this.seq = [];
     this.playerSeq = [];
+  }
+
+  resetPlayer() {
+    this.playerSeq = [];
+    this.playerTurn = false;
   }
 
   addPlayerMove(move) {

@@ -67,6 +67,8 @@ div.mid {
 }
 
 .counter {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 400;
   border: 3px solid black;
   width: 60px;
   height: 40px;

@@ -111,16 +111,6 @@ selector.addEventListener('touchend', function (e) {
   up(e);
 });
 
-var adding = function adding(obj, classN, audioT) {
-  obj.classList.add(classN);
-  audioTones.playTone(audioT);
-};
-
-var removing = function removing(obj, classN, audioT) {
-  obj.classList.remove(classN);
-  audioTones.pauseTone(audioT);
-};
-
 // button down
 var down = function down(e) {
   e.preventDefault();
@@ -140,25 +130,25 @@ var up = function up(e) {
     var colorSelected = document.getElementById(e.target.id);
     try {
       removing(colorSelected, 'light', e.target.id[3]);
-      if (!correctMatch(g.playerCount)) {
+      if (!correctMatch(g.playerSeq.length - 1)) {
         setTimeout(function () {
           var moveStatus = document.getElementsByClassName('controlPanel')[0];
           adding(moveStatus, 'incorrect', 'incorrect');
           setTimeout(function () {
             clearTimeout();
             removing(moveStatus, 'incorrect', 'incorrect');
-          }, 500);
+          }, g.timeShow);
           g.playerTurn = false;
           if (g.strictMode) {
-            document.getElementsByClassName('counter')[0].textContent = 'X X';
+            contentText('counter', 'XX');
             setTimeout(resetGame, g.timeReset);
           } else {
             g.playerSeq = [];
             setTimeout(highlightSeq, g.timeReset, 0);
           }
-        }, 250);
+        }, g.timeGap);
       } else if (g.winGame()) {
-        gameWon();
+        setTimeout(gameWon, g.timeGap);
       } else if (g.winRound()) {
         setTimeout(function () {
           var moveStatus = document.getElementsByClassName('controlPanel')[0];
@@ -166,17 +156,25 @@ var up = function up(e) {
           setTimeout(function () {
             clearTimeout();
             removing(moveStatus, 'correct', 'correct');
-          }, 500);
+          }, g.timeShow);
           clearTimeout();
           g.playerTurn = !g.playerTurn;
           g.count++;
-          setTimeout(playRound, g.timeReset);
-        }, 250);
-      } else {
-        g.playerCount++;
+          setTimeout(startRound, g.timeReset);
+        }, g.timeGap);
       }
     } catch (e) {}
   }
+};
+
+var adding = function adding(obj, classN, audioT) {
+  obj.classList.add(classN);
+  audioTones.playTone(audioT);
+};
+
+var removing = function removing(obj, classN, audioT) {
+  obj.classList.remove(classN);
+  audioTones.pauseTone(audioT);
 };
 
 var gameWon = function gameWon() {
@@ -184,27 +182,19 @@ var gameWon = function gameWon() {
   document.getElementById('box1').classList.add('correct');
   document.getElementById('box2').classList.add('correct');
   document.getElementById('box3').classList.add('correct');
-  document.getElementsByClassName('heading')[0].textContent = 'You Win!';
-  document.getElementsByClassName('counter')[0].textContent = '! !';
+  contentText('heading', 'You Win!');
+  contentText('counter', '!!');
   audioTones.playTone('win');
   setTimeout(function () {
     document.getElementById('box0').classList.remove('correct');
     document.getElementById('box1').classList.remove('correct');
     document.getElementById('box2').classList.remove('correct');
     document.getElementById('box3').classList.remove('correct');
-    document.getElementsByClassName('heading')[0].textContent = 'Simon Game';
-    document.getElementsByClassName('counter')[0].textContent = '- -';
+    contentText('heading', 'Simon Game');
+    contentText('counter', '--');
     clearTimeout();
     resetGame();
-  }, 2000);
-};
-
-var generateRandom = function generateRandom() {
-  return Math.floor(Math.random() * 4);
-};
-
-var addSeq = function addSeq(button) {
-  g.seq.push('box' + button);
+  }, g.timeReset);
 };
 
 var highlightSeq = function highlightSeq(i) {
@@ -223,36 +213,45 @@ var highlightSeq = function highlightSeq(i) {
   }
 };
 
-var resetGame = function resetGame() {
-  g.reset();
-  document.getElementsByClassName('counter')[0].innerHTML = '- -';
-  clearTimeout();
-  setTimeout(playRound, 1500);
-};
-
 var correctMatch = function correctMatch(i) {
   return g.seq[i] === g.playerSeq[i];
+};
+
+var contentText = function contentText(classN, input) {
+  document.getElementsByClassName(classN)[0].innerHTML = input;
 };
 
 var playerPlays = function playerPlays() {
   clearTimeout();
   g.playerTurn = true;
-  g.playerCount = 0;
 };
 
-var playRound = function playRound() {
-  var counter = document.getElementsByClassName('counter')[0];
-  var tens = Math.floor((g.count + 1) / 10);
-  var ones = Math.floor((g.count + 1) % 10);
-  counter.innerHTML = tens + ' ' + ones;
+var generateRandom = function generateRandom() {
+  return Math.floor(Math.random() * 4);
+};
+
+var addSeq = function addSeq(button) {
+  g.seq.push('box' + button);
+};
+
+var startRound = function startRound() {
+  var tens = Math.floor((g.seq.length + 1) / 10);
+  var ones = Math.floor((g.seq.length + 1) % 10);
+  contentText('counter', '' + tens + ones);
   addSeq(generateRandom());
-  g.playerSeq = [];
-  g.playerTurn = false;
+  g.resetPlayer();
   highlightSeq(0);
 };
 
+var resetGame = function resetGame() {
+  g.reset();
+  contentText('counter', '--');
+  clearTimeout();
+  setTimeout(startRound, g.timeReset);
+};
+
 var game = function game() {
-  playRound();
+  startRound();
 };
 
 // when the game loads, play the tones and start the game
@@ -288,7 +287,6 @@ var Game = function () {
     this.seq = [];
     this.playerSeq = [];
     this.count = 0;
-    this.playerCount = 0;
     this.playerTurn = false;
     this.timeShow = 750;
     this.timeGap = 250;
@@ -300,10 +298,15 @@ var Game = function () {
     key: "reset",
     value: function reset() {
       this.count = 0;
-      this.playerCount = 0;
       this.playerTurn = false;
       this.seq = [];
       this.playerSeq = [];
+    }
+  }, {
+    key: "resetPlayer",
+    value: function resetPlayer() {
+      this.playerSeq = [];
+      this.playerTurn = false;
     }
   }, {
     key: "addPlayerMove",
