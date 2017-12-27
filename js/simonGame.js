@@ -77,137 +77,126 @@ var _game2 = _interopRequireDefault(_game);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var audioTones = __webpack_require__(2);
-
-var hov = document.getElementsByClassName('game')[0];
+var selector = document.getElementsByClassName('game')[0];
 var resetListener = document.getElementsByClassName('resetSwitch')[0];
 var strictListener = document.getElementsByClassName('strictSwitch')[0];
-console.log(hov);
-var seq = [];
-var playerSeq = [];
-var count = 0;
-var playerCount = 0;
-var playerTurn = false;
-var timeShow = 750;
-var timeGap = 250;
-var timeReset = 2000;
-var strictMode = false;
+
+var g = new _game2.default();
 
 resetListener.addEventListener('click', function (e) {
   resetGame();
 });
 
 strictListener.addEventListener('click', function (e) {
-  strictMode = !strictMode;
-  if (strictMode) {
+  g.strictMode = !g.strictMode;
+  if (g.strictMode) {
     document.getElementsByClassName('strictSwitch')[0].classList.add('on');
   } else {
     document.getElementsByClassName('strictSwitch')[0].classList.remove('on');
   }
-  console.log('strict mode = ' + strictMode);
   resetGame();
 });
 
-hov.addEventListener('mousedown', function (e) {
+selector.addEventListener('mousedown', function (e) {
   down(e);
 });
-hov.addEventListener('mouseup', function (e) {
+selector.addEventListener('mouseup', function (e) {
   up(e);
 });
 
-hov.addEventListener('touchstart', function (e) {
+selector.addEventListener('touchstart', function (e) {
   down(e);
 });
-hov.addEventListener('touchend', function (e) {
+selector.addEventListener('touchend', function (e) {
   up(e);
 });
 
+var adding = function adding(obj, classN, audioT) {
+  obj.classList.add(classN);
+  audioTones.playTone(audioT);
+};
+
+var removing = function removing(obj, classN, audioT) {
+  obj.classList.remove(classN);
+  audioTones.pauseTone(audioT);
+};
+
+// button down
 var down = function down(e) {
   e.preventDefault();
-  if (playerTurn) {
-    console.log('Player selects: ', e.target.id);
+  if (g.playerTurn) {
     var colorSelected = document.getElementById(e.target.id);
     try {
-      colorSelected.classList.add('light');
-      playerSeq.push(e.target.id);
-      console.log('seq: ', seq);
-      console.log('player seq: ', playerSeq);
-      audioTones.playTone(e.target.id[3]);
+      g.addPlayerMove(e.target.id);
+      adding(colorSelected, 'light', e.target.id[3]);
     } catch (e) {}
   }
 };
 
+// button up
 var up = function up(e) {
   e.preventDefault();
-  if (playerTurn) {
-    console.log(e.target.id);
-    console.log('count ', count, 'playercount ', playerCount);
+  if (g.playerTurn) {
     var colorSelected = document.getElementById(e.target.id);
     try {
-      audioTones.pauseTone(e.target.id[3]);
-      colorSelected.classList.remove('light');
-      if (!correctMatch(playerCount)) {
+      removing(colorSelected, 'light', e.target.id[3]);
+      if (!correctMatch(g.playerCount)) {
         setTimeout(function () {
           var moveStatus = document.getElementsByClassName('controlPanel')[0];
-          moveStatus.classList.add('wrong');
-          audioTones.playTone('error');
+          adding(moveStatus, 'incorrect', 'incorrect');
           setTimeout(function () {
             clearTimeout();
-            moveStatus.classList.remove('wrong');
-            audioTones.pauseTone('error');
+            removing(moveStatus, 'incorrect', 'incorrect');
           }, 500);
-          playerTurn = false;
-          if (strictMode) {
-            console.log('failed at round ' + (playerCount + 1) + '. Restart!');
+          g.playerTurn = false;
+          if (g.strictMode) {
             document.getElementsByClassName('counter')[0].textContent = 'X X';
-            setTimeout(resetGame, timeReset);
+            setTimeout(resetGame, g.timeReset);
           } else {
-            console.log('failed at round ' + (playerCount + 1) + '. Retry!');
-            playerSeq = [];
-            setTimeout(highlightSeq, timeReset, 0);
+            g.playerSeq = [];
+            setTimeout(highlightSeq, g.timeReset, 0);
           }
         }, 250);
-      } else if (playerSeq.length === seq.length) {
-        if (playerSeq.length === 3) {
-          document.getElementById('box0').classList.add('correct');
-          document.getElementById('box1').classList.add('correct');
-          document.getElementById('box2').classList.add('correct');
-          document.getElementById('box3').classList.add('correct');
-          document.getElementsByClassName('heading')[0].textContent = 'You Win!';
-          document.getElementsByClassName('counter')[0].textContent = '! !';
-          audioTones.playTone('win');
+      } else if (g.winGame()) {
+        gameWon();
+      } else if (g.winRound()) {
+        setTimeout(function () {
+          var moveStatus = document.getElementsByClassName('controlPanel')[0];
+          adding(moveStatus, 'correct', 'correct');
+          setTimeout(function () {
+            clearTimeout();
+            removing(moveStatus, 'correct', 'correct');
+          }, 500);
           clearTimeout();
-          setTimeout(function () {
-            document.getElementById('box0').classList.remove('correct');
-            document.getElementById('box1').classList.remove('correct');
-            document.getElementById('box2').classList.remove('correct');
-            document.getElementById('box3').classList.remove('correct');
-            document.getElementsByClassName('heading')[0].textContent = 'Simon Game';
-            document.getElementsByClassName('counter')[0].textContent = '- -';
-            clearTimeout();
-            resetGame();
-          }, 2000);
-        } else {
-          setTimeout(function () {
-            var moveStatus = document.getElementsByClassName('controlPanel')[0];
-            moveStatus.classList.add('correct');
-            audioTones.playTone('correct');
-            setTimeout(function () {
-              clearTimeout();
-              moveStatus.classList.remove('correct');
-              audioTones.pauseTone('correct');
-            }, 500);
-            clearTimeout();
-            console.log('Made it through round ' + (count + 1) + '. Next!');
-            playerTurn = !playerTurn;
-            count++;
-            setTimeout(playRound, timeReset);
-          }, 250);
-        }
+          g.playerTurn = !g.playerTurn;
+          g.count++;
+          setTimeout(playRound, g.timeReset);
+        }, 250);
       } else {
-        playerCount++;
+        g.playerCount++;
       }
     } catch (e) {}
   }
+};
+
+var gameWon = function gameWon() {
+  document.getElementById('box0').classList.add('correct');
+  document.getElementById('box1').classList.add('correct');
+  document.getElementById('box2').classList.add('correct');
+  document.getElementById('box3').classList.add('correct');
+  document.getElementsByClassName('heading')[0].textContent = 'You Win!';
+  document.getElementsByClassName('counter')[0].textContent = '! !';
+  audioTones.playTone('win');
+  setTimeout(function () {
+    document.getElementById('box0').classList.remove('correct');
+    document.getElementById('box1').classList.remove('correct');
+    document.getElementById('box2').classList.remove('correct');
+    document.getElementById('box3').classList.remove('correct');
+    document.getElementsByClassName('heading')[0].textContent = 'Simon Game';
+    document.getElementsByClassName('counter')[0].textContent = '- -';
+    clearTimeout();
+    resetGame();
+  }, 2000);
 };
 
 var generateRandom = function generateRandom() {
@@ -215,76 +204,60 @@ var generateRandom = function generateRandom() {
 };
 
 var addSeq = function addSeq(button) {
-  seq.push('box' + button);
+  g.seq.push('box' + button);
 };
 
 var highlightSeq = function highlightSeq(i) {
-  var colorSelected = document.getElementById(seq[i]);
-  console.log('highlightSeq ', seq[i]);
-  if (i < seq.length) {
-    colorSelected.classList.add('light');
-    audioTones.playTone(seq[i][3]);
+  var colorSelected = document.getElementById(g.seq[i]);
+  if (i < g.seq.length) {
+    adding(colorSelected, 'light', g.seq[i][3]);
     setTimeout(function () {
-      colorSelected.classList.remove('light');
-      audioTones.pauseTone(seq[i][3]);
+      removing(colorSelected, 'light', g.seq[i][3]);
       setTimeout(function () {
         i++;
         highlightSeq(i);
-      }, timeGap);
-    }, timeShow);
+      }, g.timeGap);
+    }, g.timeShow);
   } else {
     playerPlays();
   }
 };
 
 var resetGame = function resetGame() {
-  count = 0;
-  playerCount = 0;
-  playerTurn = false;
-  seq = [];
-  playerSeq = [];
+  g.reset();
   document.getElementsByClassName('counter')[0].innerHTML = '- -';
   clearTimeout();
   setTimeout(playRound, 1500);
 };
 
 var correctMatch = function correctMatch(i) {
-  console.log('count ' + i + ', expect ' + seq[i] + ', actual ' + playerSeq[i] + ' ');
-  return seq[i] === playerSeq[i];
+  return g.seq[i] === g.playerSeq[i];
 };
 
 var playerPlays = function playerPlays() {
   clearTimeout();
-  console.log('in playerPlays');
-  playerTurn = true;
-  playerCount = 0;
+  g.playerTurn = true;
+  g.playerCount = 0;
 };
 
 var playRound = function playRound() {
-  console.log('Round ', count + 1, 'count ', count);
   var counter = document.getElementsByClassName('counter')[0];
-  var tens = Math.floor((count + 1) / 10);
-  var ones = Math.floor((count + 1) % 10);
+  var tens = Math.floor((g.count + 1) / 10);
+  var ones = Math.floor((g.count + 1) % 10);
   counter.innerHTML = tens + ' ' + ones;
   addSeq(generateRandom());
-  console.log(seq);
-  playerSeq = [];
-  playerTurn = false;
+  g.playerSeq = [];
+  g.playerTurn = false;
   highlightSeq(0);
 };
 
 var game = function game() {
-  console.log(count);
-  console.log('start game');
   playRound();
 };
 
-// setTimeout(game, 1000);
-
-var g = new _game2.default();
-console.log(g);
-
+// when the game loads, play the tones and start the game
 audioTones.playTone('win');
+setTimeout(game, 2000);
 
 /***/ }),
 /* 1 */
@@ -297,21 +270,61 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Game = function Game() {
-  _classCallCheck(this, Game);
+var Game = function () {
+  _createClass(Game, null, [{
+    key: "MAX",
+    get: function get() {
+      return 3;
+    }
+  }]);
 
-  this.seq = [];
-  this.playerSeq = [];
-  this.count = 0;
-  this.playerCount = 0;
-  this.playerTurn = false;
-  this.timeShow = 750;
-  this.timeGap = 250;
-  this.timeReset = 2000;
-  this.strictMode = false;
-};
+  function Game() {
+    _classCallCheck(this, Game);
+
+    this.seq = [];
+    this.playerSeq = [];
+    this.count = 0;
+    this.playerCount = 0;
+    this.playerTurn = false;
+    this.timeShow = 750;
+    this.timeGap = 250;
+    this.timeReset = 2000;
+    this.strictMode = false;
+  }
+
+  _createClass(Game, [{
+    key: "reset",
+    value: function reset() {
+      this.count = 0;
+      this.playerCount = 0;
+      this.playerTurn = false;
+      this.seq = [];
+      this.playerSeq = [];
+    }
+  }, {
+    key: "addPlayerMove",
+    value: function addPlayerMove(move) {
+      this.playerSeq.push(move);
+    }
+  }, {
+    key: "winGame",
+    value: function winGame() {
+      var MAX = 3;
+      return this.playerSeq.length === MAX;
+    }
+  }, {
+    key: "winRound",
+    value: function winRound() {
+      return this.playerSeq.length === this.seq.length;
+    }
+  }]);
+
+  return Game;
+}();
 
 exports.default = Game;
 
@@ -326,28 +339,29 @@ exports.default = Game;
 
 var sound = [164.81, 220.00, 277.18, 329.63, 90, 380];
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-var osc0 = audioCtx.createOscillator();
-var osc1 = audioCtx.createOscillator();
-var osc2 = audioCtx.createOscillator();
-var osc3 = audioCtx.createOscillator();
-var errorTone = audioCtx.createOscillator();
-var correctTone = audioCtx.createOscillator();
 
+var osc0 = audioCtx.createOscillator();
 osc0.frequency.value = sound[0];
 osc0.start(0);
 
+var osc1 = audioCtx.createOscillator();
 osc1.frequency.value = sound[1];
 osc1.start(0);
 
+var osc2 = audioCtx.createOscillator();
 osc2.frequency.value = sound[2];
 osc2.start(0);
 
+var osc3 = audioCtx.createOscillator();
 osc3.frequency.value = sound[3];
 osc3.start(0);
 
+var errorTone = audioCtx.createOscillator();
+errorTone.type = 'square';
 errorTone.frequency.value = sound[4];
 errorTone.start(0);
 
+var correctTone = audioCtx.createOscillator();
 correctTone.frequency.value = sound[5];
 correctTone.start(0);
 
@@ -382,7 +396,7 @@ var playTone = function playTone(type) {
     case 'correct':
       correctTone.connect(audioCtx.destination);
       break;
-    case 'error':
+    case 'incorrect':
       errorTone.connect(audioCtx.destination);
       break;
     case '0':
@@ -407,7 +421,7 @@ var pauseTone = function pauseTone(type) {
     case 'correct':
       correctTone.disconnect(audioCtx.destination);
       break;
-    case 'error':
+    case 'incorrect':
       errorTone.disconnect(audioCtx.destination);
       break;
     case '0':

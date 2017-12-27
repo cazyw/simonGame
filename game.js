@@ -1,4 +1,5 @@
 export default class Game{
+  static get MAX() { return 3; }
   constructor () {
     this.seq = [];
     this.playerSeq = [];
@@ -9,5 +10,26 @@ export default class Game{
     this.timeGap = 250;
     this.timeReset = 2000;
     this.strictMode = false;
+  }
+
+  reset() {
+    this.count = 0;
+    this.playerCount = 0;
+    this.playerTurn = false;
+    this.seq = [];
+    this.playerSeq = [];
+  }
+
+  addPlayerMove(move) {
+    this.playerSeq.push(move);
+  }
+
+  winGame() {
+    const MAX = 3;
+    return this.playerSeq.length === MAX;
+  }
+
+  winRound() {
+    return this.playerSeq.length === this.seq.length;
   }
 }

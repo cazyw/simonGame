@@ -2,28 +2,29 @@
  
 var sound = [164.81, 220.00, 277.18, 329.63, 90, 380];
 var audioCtx =  new (window.AudioContext || window.webkitAudioContext)();
-var osc0 = audioCtx.createOscillator();
-var osc1 = audioCtx.createOscillator();
-var osc2 = audioCtx.createOscillator();
-var osc3 = audioCtx.createOscillator();
-var errorTone = audioCtx.createOscillator();
-var correctTone = audioCtx.createOscillator();
 
+var osc0 = audioCtx.createOscillator();
 osc0.frequency.value = sound[0];
 osc0.start(0);
 
+var osc1 = audioCtx.createOscillator();
 osc1.frequency.value = sound[1];
 osc1.start(0);
 
+var osc2 = audioCtx.createOscillator();
 osc2.frequency.value = sound[2];
 osc2.start(0);
 
+var osc3 = audioCtx.createOscillator();
 osc3.frequency.value = sound[3];
 osc3.start(0);
 
+var errorTone = audioCtx.createOscillator();
+errorTone.type = 'square';
 errorTone.frequency.value = sound[4];
 errorTone.start(0);
 
+var correctTone = audioCtx.createOscillator();
 correctTone.frequency.value = sound[5];
 correctTone.start(0);
 
@@ -58,7 +59,7 @@ let playTone = (type) => {
     case 'correct':
       correctTone.connect(audioCtx.destination);      
       break;
-    case 'error':
+    case 'incorrect':
       errorTone.connect(audioCtx.destination); 
       break;
     case '0':
@@ -83,7 +84,7 @@ let pauseTone = (type) => {
     case 'correct':
       correctTone.disconnect(audioCtx.destination);      
       break;
-    case 'error':
+    case 'incorrect':
       errorTone.disconnect(audioCtx.destination); 
       break;
     case '0':
