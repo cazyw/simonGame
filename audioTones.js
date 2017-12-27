@@ -7,18 +7,22 @@ var sound = [164.81, 220.00, 277.18, 329.63, 200, 380];
 var audioCtx =  new (window.AudioContext || window.webkitAudioContext)();
 
 var osc0 = audioCtx.createOscillator();
+osc0.type = 'square';
 osc0.frequency.value = sound[0];
 osc0.start(0);
 
 var osc1 = audioCtx.createOscillator();
+osc1.type = 'square';
 osc1.frequency.value = sound[1];
 osc1.start(0);
 
 var osc2 = audioCtx.createOscillator();
+osc2.type = 'square';
 osc2.frequency.value = sound[2];
 osc2.start(0);
 
 var osc3 = audioCtx.createOscillator();
+osc3.type = 'square';
 osc3.frequency.value = sound[3];
 osc3.start(0);
 
@@ -28,6 +32,7 @@ errorTone.frequency.value = sound[4];
 errorTone.start(0);
 
 var correctTone = audioCtx.createOscillator();
+correctTone.type = 'square';
 correctTone.frequency.value = sound[5];
 correctTone.start(0);
 
