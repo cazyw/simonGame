@@ -3,7 +3,7 @@
 // tones to be played for a unset period of time (depending on how long players
 // hold the buttons down)
  
-var sound = [164.81, 220.00, 277.18, 329.63, 90, 380];
+var sound = [164.81, 220.00, 277.18, 329.63, 200, 380];
 var audioCtx =  new (window.AudioContext || window.webkitAudioContext)();
 
 var osc0 = audioCtx.createOscillator();
@@ -23,7 +23,7 @@ osc3.frequency.value = sound[3];
 osc3.start(0);
 
 var errorTone = audioCtx.createOscillator();
-// errorTone.type = 'square';
+errorTone.type = 'square';
 errorTone.frequency.value = sound[4];
 errorTone.start(0);
 
